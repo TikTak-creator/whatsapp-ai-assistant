@@ -400,12 +400,15 @@ class WhatsAppBot {
     try {
       if (!this.sock) return [];
       const groups = await this.sock.groupFetchAllParticipating();
-      return Object.entries(groups).map(([jid, metadata]) => ({
-        jid,
-        name: metadata.subject,
-        participants: metadata.participants?.length || 0,
-        isWhitelisted: await database.isGroupWhitelisted(jid),
-      }));
+      const entries = await Promise.all(
+        Object.entries(groups).map(async ([jid, metadata]) => ({
+          jid,
+          name: metadata.subject,
+          participants: metadata.participants?.length || 0,
+          isWhitelisted: await database.isGroupWhitelisted(jid),
+        }))
+      );
+      return entries;
     } catch (err) {
       logger.error({ err }, 'Failed to fetch groups');
       return [];
