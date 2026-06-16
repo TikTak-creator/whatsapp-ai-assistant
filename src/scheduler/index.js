@@ -203,7 +203,7 @@ class Scheduler {
    * Cancel a scheduled task.
    * @param {number} taskId
    */
-  cancelTask(taskId) {
+  async cancelTask(taskId) {
     // Clear in-memory timer if exists
     if (this.timers.has(taskId)) {
       clearTimeout(this.timers.get(taskId));
@@ -218,7 +218,7 @@ class Scheduler {
    * Delete a task.
    * @param {number} taskId
    */
-  deleteTask(taskId) {
+  async deleteTask(taskId) {
     if (this.timers.has(taskId)) {
       clearTimeout(this.timers.get(taskId));
       this.timers.delete(taskId);
