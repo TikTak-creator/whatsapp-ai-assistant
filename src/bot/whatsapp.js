@@ -122,6 +122,17 @@ class WhatsAppBot {
             : 0;
 
           const isLoggedOut = statusCode === DisconnectReason.loggedOut;
+          const isBadSession = statusCode === 405 || statusCode === DisconnectReason.badSession;
+
+          // If bad session (e.g. 405), clear auth and force fresh QR
+          if (isBadSession && this.reconnectAttempts === 0) {
+            this.reconnectAttempts++;
+            logger.info('Bad session detected (405), clearing auth for fresh QR...');
+            this.clearAuthSession().catch(() => {});
+            setTimeout(() => this.start(), 2000);
+            return;
+          }
+
           const shouldReconnect = !isLoggedOut && this.reconnectAttempts < this.maxReconnectAttempts;
 
           logger.error(
@@ -379,13 +390,13 @@ class WhatsAppBot {
   /**
    * Clear auth session data and reset connection.
    */
-  clearAuthSession() {
+  async clearAuthSession() {
     try {
       if (existsSync(this.authDir)) {
         rmSync(this.authDir, { recursive: true, force: true });
         mkdirSync(this.authDir, { recursive: true });
         logger.info('Auth session cleared — QR will be requested on next start');
-        database.logActivity('auth_session_cleared', {});
+        await database.logActivity('auth_session_cleared', {}).catch(() => {});
       }
     } catch (err) {
       logger.error({ err }, 'Failed to clear auth session');
