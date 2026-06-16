@@ -1,0 +1,46 @@
+# Render Blueprint — WhatsApp AI Group Assistant
+# https://render.com/docs/blueprint-spec
+
+services:
+  # Main application — Web Service
+  - type: web
+    name: whatsapp-ai-assistant
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/system/info
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+      - key: LLM_PROVIDER
+        value: google
+      - key: GOOGLE_API_KEY
+        sync: false   # You'll fill this in the Render dashboard
+      - key: GOOGLE_MODEL
+        value: gemma-4-31b-it
+      - key: TAVILY_API_KEY
+        sync: false   # You'll fill this in the Render dashboard
+      - key: DATABASE_URL
+        fromDatabase:
+          name: whatsapp-ai-db
+          property: connectionString
+      - key: BOT_NICKNAME
+        value: AI Assistant
+      - key: BOT_ACTIVITY_LEVEL
+        value: medium
+      - key: BOT_TIMEZONE
+        value: Asia/Bishkek
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false   # You'll set this in the dashboard
+      - key: SESSION_DIR
+        value: /app/data/sessions
+
+databases:
+  - name: whatsapp-ai-db
+    plan: free
+    region: oregon
+    ipAllowList: []  # Allow only from Render services

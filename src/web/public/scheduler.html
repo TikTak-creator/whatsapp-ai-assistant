@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Планировщик — WhatsApp AI Assistant</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">🤖 WA AI</div>
+        <div class="bot-status-indicator" id="statusIndicator">
+          <span class="status-dot offline"></span>
+          <span class="status-text">Загрузка...</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="nav-item" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="/settings" class="nav-item" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Настройки</span>
+        </a>
+        <a href="/memory" class="nav-item" data-page="memory">
+          <span class="nav-icon">🧠</span>
+          <span class="nav-label">Память</span>
+        </a>
+        <a href="/scheduler" class="nav-item active" data-page="scheduler">
+          <span class="nav-icon">⏰</span>
+          <span class="nav-label">Планировщик</span>
+        </a>
+        <a href="/logs" class="nav-item" data-page="logs">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">Логи</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/api/bot/logout" class="nav-item logout-btn" onclick="event.preventDefault(); logout();">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Выйти</span>
+        </a>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="page-header">
+        <h1>⏰ Планировщик задач</h1>
+        <div class="header-actions">
+          <span class="timezone-badge">Asia/Bishkek (+06:00)</span>
+          <button class="btn btn-sm" onclick="refreshTasks()">🔄 Обновить</button>
+        </div>
+      </header>
+
+      <!-- Add task form -->
+      <div class="card">
+        <div class="card-header">
+          <h3>➕ Новая задача</h3>
+        </div>
+        <div class="card-body">
+          <form id="taskForm" class="task-form" onsubmit="addTask(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="taskTime">Время</label>
+                <input type="datetime-local" id="taskTime" required>
+                <small>Asia/Bishkek часовой пояс</small>
+              </div>
+              <div class="form-group">
+                <label for="taskJid">JID чата (опционально)</label>
+                <input type="text" id="taskJid" placeholder="группа@ g.us">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="taskMessage">Сообщение</label>
+              <textarea id="taskMessage" rows="3" placeholder="Текст сообщения..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">📅 Запланировать</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tasks list -->
+      <div class="card">
+        <div class="card-header">
+          <h3>📋 Запланированные задачи</h3>
+        </div>
+        <div class="card-body">
+          <div class="tasks-list" id="tasksList">
+            <div class="loading-spinner">Загрузка...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/websocket.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/scheduler.js"></script>
+  <script>
+    function logout() {
+      document.cookie = 'auth_token=; path=/; max-age=0';
+      window.location.href = '/login';
+    }
+  </script>
+</body>
+</html>

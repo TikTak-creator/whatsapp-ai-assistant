@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Настройки — WhatsApp AI Assistant</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">🤖 WA AI</div>
+        <div class="bot-status-indicator" id="statusIndicator">
+          <span class="status-dot offline"></span>
+          <span class="status-text">Загрузка...</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="nav-item" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="/settings" class="nav-item active" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Настройки</span>
+        </a>
+        <a href="/memory" class="nav-item" data-page="memory">
+          <span class="nav-icon">🧠</span>
+          <span class="nav-label">Память</span>
+        </a>
+        <a href="/scheduler" class="nav-item" data-page="scheduler">
+          <span class="nav-icon">⏰</span>
+          <span class="nav-label">Планировщик</span>
+        </a>
+        <a href="/logs" class="nav-item" data-page="logs">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">Логи</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/api/bot/logout" class="nav-item logout-btn" onclick="event.preventDefault(); logout();">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Выйти</span>
+        </a>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="page-header">
+        <h1>⚙️ Настройки</h1>
+        <div id="settingsSaveStatus" class="save-status"></div>
+      </header>
+
+      <div class="settings-grid">
+        <!-- System Prompt -->
+        <div class="card">
+          <div class="card-header">
+            <h3>🧠 System Prompt</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="systemPrompt">Основная инструкция для AI</label>
+              <textarea id="systemPrompt" rows="8" placeholder="Напишите системный промпт..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bot Settings -->
+        <div class="card">
+          <div class="card-header">
+            <h3>🤖 Настройки бота</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="botNickname">Имя бота (Nickname)</label>
+              <input type="text" id="botNickname" placeholder="AI Assistant">
+            </div>
+            <div class="form-group">
+              <label for="activityLevel">Уровень активности</label>
+              <div class="activity-slider-container">
+                <input type="range" id="activityLevel" min="0" max="2" step="1" value="1">
+                <div class="activity-labels">
+                  <span class="active" id="levelLow">🟢 Low</span>
+                  <span class="active" id="levelMedium">🟡 Medium</span>
+                  <span class="active" id="levelHigh">🔴 High</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="autoReplyEnabled">
+                <input type="checkbox" id="autoReplyEnabled">
+                Автоматические ответы (включено)
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- API Keys -->
+        <div class="card">
+          <div class="card-header">
+            <h3>🔑 API Ключи</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="tavilyApiKey">Tavily API Key</label>
+              <input type="password" id="tavilyApiKey" placeholder="tvly-...">
+              <small>Ключ для поиска информации и изображений</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Whitelist Groups -->
+        <div class="card">
+          <div class="card-header">
+            <h3>🔒 Разрешённые группы</h3>
+          </div>
+          <div class="card-body">
+            <div class="whitelist-controls">
+              <button class="btn btn-sm" onclick="refreshWhitelist()">🔄 Обновить</button>
+              <button class="btn btn-sm btn-primary" onclick="fetchAndAddAllGroups()">📥 Добавить все группы</button>
+            </div>
+            <div class="whitelist-groups" id="whitelistGroups">
+              <div class="loading-spinner">Загрузка...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn btn-primary" onclick="saveSettings()">💾 Сохранить настройки</button>
+      </div>
+    </main>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/websocket.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/settings.js"></script>
+  <script>
+    function logout() {
+      document.cookie = 'auth_token=; path=/; max-age=0';
+      window.location.href = '/login';
+    }
+  </script>
+</body>
+</html>

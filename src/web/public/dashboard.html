@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — WhatsApp AI Assistant</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">🤖 WA AI</div>
+        <div class="bot-status-indicator" id="statusIndicator">
+          <span class="status-dot offline"></span>
+          <span class="status-text">Загрузка...</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="/settings" class="nav-item" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Настройки</span>
+        </a>
+        <a href="/memory" class="nav-item" data-page="memory">
+          <span class="nav-icon">🧠</span>
+          <span class="nav-label">Память</span>
+        </a>
+        <a href="/scheduler" class="nav-item" data-page="scheduler">
+          <span class="nav-icon">⏰</span>
+          <span class="nav-label">Планировщик</span>
+        </a>
+        <a href="/logs" class="nav-item" data-page="logs">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">Логи</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/api/bot/logout" class="nav-item logout-btn" onclick="event.preventDefault(); logout();">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Выйти</span>
+        </a>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="page-header">
+        <h1>📊 Dashboard</h1>
+        <div class="header-actions">
+          <button class="btn btn-sm" onclick="refreshDashboard()">🔄 Обновить</button>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <!-- Bot Status Card -->
+        <div class="card status-card">
+          <div class="card-header">
+            <h3>🤖 Статус бота</h3>
+          </div>
+          <div class="card-body">
+            <div class="status-big" id="botStatusBig">
+              <span class="status-dot-big offline"></span>
+              <span class="status-label">Отключён</span>
+            </div>
+            <div class="status-details" id="statusDetails">
+              <div class="detail-row"><span>JID:</span> <code id="botJid">—</code></div>
+              <div class="detail-row"><span>Соединение:</span> <span id="connectionState">—</span></div>
+              <div class="detail-row"><span>Uptime:</span> <span id="botUptime">—</span></div>
+              <div class="detail-row"><span>Групп:</span> <span id="groupCount">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QR Code Card -->
+        <div class="card qr-card">
+          <div class="card-header">
+            <h3>📱 QR-код</h3>
+          </div>
+          <div class="card-body" id="qrContainer">
+            <div class="qr-placeholder" id="qrPlaceholder">
+              <div class="qr-icon">📱</div>
+              <p>Подключите WhatsApp, отсканировав QR-код</p>
+              <p class="qr-hint">QR появится при запуске бота</p>
+            </div>
+            <div id="qrCanvas" style="display:none;">
+              <canvas id="qrCodeCanvas"></canvas>
+              <p class="qr-instruction">Отсканируйте этот код в WhatsApp → Связанные устройства</p>
+              <button class="btn btn-sm" onclick="window.location.reload()">🔄 Новый QR</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Groups Card -->
+        <div class="card groups-card">
+          <div class="card-header">
+            <h3>👥 Группы</h3>
+            <button class="btn btn-sm" onclick="refreshGroups()">🔄</button>
+          </div>
+          <div class="card-body">
+            <div class="groups-list" id="groupsList">
+              <div class="loading-spinner">Загрузка групп...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity Card -->
+        <div class="card activity-card">
+          <div class="card-header">
+            <h3>🕐 Последние события</h3>
+          </div>
+          <div class="card-body">
+            <div class="activity-list" id="activityList">
+              <div class="loading-spinner">Загрузка...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/websocket.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    function logout() {
+      document.cookie = 'auth_token=; path=/; max-age=0';
+      window.location.href = '/login';
+    }
+  </script>
+</body>
+</html>
