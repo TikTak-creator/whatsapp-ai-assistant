@@ -160,6 +160,4 @@ docker run -p 3000:3000 \
   whatsapp-ai-assistant
 ```
 
----
 
-Made with ❤️ by [Codebuff AI](https://codebuff.com)
